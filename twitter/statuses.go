@@ -2,10 +2,10 @@ package twitter
 
 import (
 	"fmt"
-	"net/http"
-	"time"
-
 	"github.com/dghubble/sling"
+	"net/http"
+	"strconv"
+	"time"
 )
 
 // Tweet represents a Twitter Tweet, previously called a status.
@@ -52,6 +52,14 @@ type Tweet struct {
 // CreatedAtTime is a convenience wrapper that returns the Created_at time, parsed as a time.Time struct
 func (t Tweet) CreatedAtTime() (time.Time, error) {
 	return time.Parse(time.RubyDate, t.CreatedAt)
+}
+
+func (t Tweet) GetTimestamp() (time.Time, error) {
+	ts, err := strconv.ParseInt(t.TimestampMs, 10, 64)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return time.Unix(0, ts*1000000), nil
 }
 
 // ExtendedTweet represents fields embedded in extended Tweets when served in
